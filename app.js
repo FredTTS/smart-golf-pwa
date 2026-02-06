@@ -346,6 +346,12 @@ function selectHole(holeNumber) {
     document.getElementById('clubRecommendation').style.display = 'block';
     document.getElementById('timerSection').style.display = 'block';
     
+    // Update ideal time for this hole (15 min per hole)
+    const idealMinutes = holeNumber * 15;
+    const idealHours = Math.floor(idealMinutes / 60);
+    const idealMins = idealMinutes % 60;
+    document.getElementById('holeTimeLimit').textContent = `${String(idealHours).padStart(2, '0')}:${String(idealMins).padStart(2, '0')}`;
+    
     // Start timer on first hole if not already running
     if (!state.timerRunning && !state.timerStartTime) {
         startTimer();
@@ -414,9 +420,8 @@ function updateTimerDisplay() {
     const elapsed = Math.floor((Date.now() - state.timerStartTime) / 1000);
     const hours = Math.floor(elapsed / 3600);
     const minutes = Math.floor((elapsed % 3600) / 60);
-    const seconds = elapsed % 60;
     
-    const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
     document.getElementById('elapsedTime').textContent = timeString;
 }
 
