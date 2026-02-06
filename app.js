@@ -379,12 +379,12 @@ function updateWeatherDisplay() {
     if (!state.weatherData) return;
     
     const temp = Math.round(state.weatherData.main.temp);
-    const windSpeed = Math.round(state.weatherData.wind.speed * 3.6); // m/s to km/h
+    const windSpeed = Math.round(state.weatherData.wind.speed * 10) / 10; // m/s
     const windDir = getWindDirection(state.weatherData.wind.deg);
     const humidity = state.weatherData.main.humidity;
     
     document.getElementById('temperature').textContent = `${temp}°C`;
-    document.getElementById('windSpeed').textContent = `${windSpeed} km/h`;
+    document.getElementById('windSpeed').textContent = `${windSpeed} m/s`;
     document.getElementById('windDirection').textContent = windDir;
     document.getElementById('humidity').textContent = `${humidity}%`;
 }
@@ -608,12 +608,12 @@ function updateWindAdjustment() {
     if (!pinPos) return;
     
     const windDeg = state.weatherData.wind.deg;
-    const windSpeed = state.weatherData.wind.speed * 3.6; // km/h
+    const windSpeed = state.weatherData.wind.speed; // m/s
     const bearing = calculateBearing(state.userPosition, pinPos);
     
     // Calculate cross-wind component
     const crossWind = Math.sin((windDeg - bearing) * Math.PI / 180) * windSpeed;
-    const aimAdjustment = Math.round(Math.abs(crossWind) * 0.5); // ~0.5m per km/h crosswind
+    const aimAdjustment = Math.round(Math.abs(crossWind) * 2); // ~2m per m/s crosswind
     
     const windAdjustmentEl = document.getElementById('windAdjustment');
     const windAdjustmentText = document.getElementById('windAdjustmentText');
