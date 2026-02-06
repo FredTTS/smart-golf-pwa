@@ -324,7 +324,7 @@ input[type="range"]::-moz-range-thumb:hover {
 /* Weather Info */
 .weather-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
 }
 
@@ -706,17 +706,4 @@ input[type="range"]::-moz-range-thumb:hover {
     display: flex;
     gap: 0.5rem;
     align-items: center;
-}
-
-/* Hole Image */
-.hole-image {
-    display: none;
-    overflow: hidden;
-}
-
-.hole-image img {
-    width: 100%;
-    height: auto;
-    border-radius: 0.5rem;
-    object-fit: cover;
 }

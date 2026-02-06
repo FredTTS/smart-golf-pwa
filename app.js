@@ -337,15 +337,6 @@ function selectHole(holeNumber) {
     document.getElementById('weatherInfo').style.display = 'block';
     document.getElementById('clubRecommendation').style.display = 'block';
     
-    // Load and display hole image
-    const holeImageEl = document.getElementById('holeImage');
-    const holeImageImg = document.getElementById('holeImageElement');
-    if (holeImageEl && holeImageImg) {
-        holeImageEl.style.display = 'block';
-        holeImageImg.src = `img/s${holeNumber}.jpg`;
-        holeImageImg.alt = `Hål ${holeNumber} layout`;
-    }
-    
     // Reset pin position
     resetPinPosition();
     
