@@ -15,20 +15,24 @@
         <!-- Header -->
         <header class="header">
             <div class="header-content">
-                <h1>⛳ Smart Golf</h1>
-                <button class="settings-btn" id="settingsBtn">
+                <h1>⛳ Ansis app</h1>
+                <div style="display: flex; gap: .5rem; align-items: center;">
+                    <button id="editLayoutBtn" class="settings-btn" title="Redigera layout">↕</button>
+                    <button id="resetLayoutBtn" class="settings-btn" title="Återställ layout">⟲</button>
+                    <button class="settings-btn" id="settingsBtn">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M12 1v6m0 6v6m8.66-9l-5.2 3m-6.92 4l-5.2 3M20.66 17l-5.2-3m-6.92-4l-5.2-3"></path>
                     </svg>
                 </button>
+                </div>
             </div>
         </header>
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Hole Selection -->
-            <section class="card hole-selector">
+            <section class="card hole-selector" id="holeSelector" data-layout-id="holeSelector">
                 <h2>Välj Hål</h2>
                 <div class="hole-buttons" id="holeButtons"></div>
             </section>
@@ -58,7 +62,7 @@
             </section>
 
             <!-- Pin Position Adjustment -->
-            <section class="card pin-adjustment" id="pinAdjustment" style="display: none;">
+            <section class="card pin-adjustment" id="pinAdjustment" data-layout-id="pinAdjustment" style="display: none;">
                 <h3>Flaggposition</h3>
                 <div class="adjustment-controls">
                     <div class="adjustment-group">
@@ -84,7 +88,7 @@
             </section>
 
             <!-- Weather Conditions -->
-            <section class="card weather-info" id="weatherInfo" style="display: none;">
+            <section class="card weather-info" id="weatherInfo" data-layout-id="weatherInfo" style="display: none;">
                 <h3>Väderförhållanden</h3>
                 <div class="weather-grid">
                     <div class="weather-item">
@@ -111,7 +115,7 @@
             </section>
 
             <!-- Club Recommendation -->
-            <section class="card club-recommendation" id="clubRecommendation" style="display: none;">
+            <section class="card club-recommendation" id="clubRecommendation" data-layout-id="clubRecommendation" style="display: none;">
                 <h3>Rekommenderad Klubba</h3>
                 <div class="recommended-club" id="recommendedClub">
                     <div class="club-name">-</div>

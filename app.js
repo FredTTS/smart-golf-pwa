@@ -18,6 +18,9 @@ let state = {
     watchId: null
 };
 
+// Layout persistence key
+const LAYOUT_KEY = 'layoutOrder';
+
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
@@ -26,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initializeApp() {
     createHoleButtons();
     setupEventListeners();
+    loadLayoutOrder();
     startLocationTracking();
 }
 
@@ -50,13 +54,34 @@ function saveClubData() {
 // UI Creation
 function createHoleButtons() {
     const container = document.getElementById('holeButtons');
+    if (!container) return;
+    container.innerHTML = '';
+
+    // Create compact select dropdown to save space
+    const select = document.createElement('select');
+    select.id = 'holeSelect';
+    select.className = 'hole-select';
+
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Välj hål...';
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    select.appendChild(placeholder);
+
     for (let i = 1; i <= 18; i++) {
-        const button = document.createElement('button');
-        button.className = 'hole-btn';
-        button.textContent = i;
-        button.addEventListener('click', () => selectHole(i));
-        container.appendChild(button);
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `Hål ${i}`;
+        select.appendChild(opt);
     }
+
+    select.addEventListener('change', (e) => {
+        const val = parseInt(e.target.value, 10);
+        if (!isNaN(val)) selectHole(val);
+    });
+
+    container.appendChild(select);
 }
 
 function createClubSettings() {
@@ -111,6 +136,118 @@ function setupEventListeners() {
     });
     
     document.getElementById('resetPin').addEventListener('click', resetPinPosition);
+
+    // Layout edit buttons
+    const editBtn = document.getElementById('editLayoutBtn');
+    const resetLayoutBtn = document.getElementById('resetLayoutBtn');
+    if (editBtn) {
+        editBtn.addEventListener('click', () => {
+            const enabled = document.body.classList.toggle('layout-edit');
+            setDraggableState(enabled);
+            if (enabled) setupDragHandlers();
+        });
+    }
+    if (resetLayoutBtn) {
+        resetLayoutBtn.addEventListener('click', () => {
+            localStorage.removeItem(LAYOUT_KEY);
+            location.reload();
+        });
+    }
+}
+
+function loadLayoutOrder() {
+    try {
+        const saved = localStorage.getItem(LAYOUT_KEY);
+        if (!saved) return;
+        const order = JSON.parse(saved);
+        const container = document.querySelector('.main-content');
+        if (!container) return;
+        order.forEach(id => {
+            const el = document.querySelector(`[data-layout-id="${id}"], #${id}`);
+            if (el) container.appendChild(el);
+        });
+    } catch (e) {
+        console.warn('Could not load layout order', e);
+    }
+}
+
+function saveLayoutOrder() {
+    const container = document.querySelector('.main-content');
+    if (!container) return;
+    const sections = Array.from(container.querySelectorAll('.card'));
+    const order = sections.map(s => s.dataset.layoutId || s.id).filter(Boolean);
+    localStorage.setItem(LAYOUT_KEY, JSON.stringify(order));
+}
+
+function setDraggableState(enabled) {
+    document.querySelectorAll('.card').forEach(el => {
+        if (enabled) {
+            el.setAttribute('draggable', 'true');
+            el.classList.add('draggable');
+            if (!el.querySelector('.drag-handle')) {
+                const handle = document.createElement('div');
+                handle.className = 'drag-handle';
+                handle.textContent = '⋮';
+                el.appendChild(handle);
+            }
+        } else {
+            el.removeAttribute('draggable');
+            el.classList.remove('draggable');
+            const h = el.querySelector('.drag-handle');
+            if (h) h.remove();
+        }
+    });
+}
+
+// Drag & drop handlers
+let draggedEl = null;
+function setupDragHandlers() {
+    const container = document.querySelector('.main-content');
+    if (!container) return;
+
+    container.addEventListener('dragstart', (e) => {
+        const el = e.target.closest('.card');
+        if (!el) return;
+        draggedEl = el;
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', el.dataset.layoutId || el.id); } catch (err) {}
+        el.classList.add('dragging');
+    });
+
+    container.addEventListener('dragend', () => {
+        if (draggedEl) draggedEl.classList.remove('dragging');
+        draggedEl = null;
+        saveLayoutOrder();
+    });
+
+    container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const afterEl = getDragAfterElement(container, e.clientY);
+        if (!draggedEl) return;
+        if (afterEl == null) {
+            container.appendChild(draggedEl);
+        } else {
+            container.insertBefore(draggedEl, afterEl);
+        }
+    });
+
+    container.addEventListener('drop', (e) => {
+        e.preventDefault();
+        saveLayoutOrder();
+    });
+}
+
+function getDragAfterElement(container, y) {
+    const draggableEls = [...container.querySelectorAll('.card:not(.dragging)')];
+    let closest = { offset: Number.NEGATIVE_INFINITY, element: null };
+    draggableEls.forEach(child => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            closest = { offset, element: child };
+        }
+    });
+    return closest.element;
 }
 
 function openSettings() {
@@ -166,14 +303,9 @@ function startLocationTracking() {
 // Hole Selection
 function selectHole(holeNumber) {
     state.currentHole = holeNumber;
-    
-    // Update UI
-    document.querySelectorAll('.hole-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (parseInt(btn.textContent) === holeNumber) {
-            btn.classList.add('active');
-        }
-    });
+    // Update UI: set select value if present
+    const selectEl = document.getElementById('holeSelect');
+    if (selectEl) selectEl.value = holeNumber;
     
     // Show relevant sections
     document.getElementById('pinAdjustment').style.display = 'block';
