@@ -21,8 +21,8 @@ const DEFAULT_CLUB_DATA = {
     'Järn 8': { totalDistance: 130, carryDistance: 120 },
     'Järn 9': { totalDistance: 120, carryDistance: 110 },
     'PW': { totalDistance: 110, carryDistance: 95 },
-    'SW': { totalDistance: 50, carryDistance: 45 },
-    'LW': { totalDistance: 40, carryDistance: 35 }
+    'SW': { totalDistance: 85, carryDistance: 80 },
+    'LW': { totalDistance: 75, carryDistance: 70 }
 };
 // App State
 let state = {
