@@ -30,6 +30,9 @@ function initializeApp() {
     createHoleButtons();
     setupEventListeners();
     loadLayoutOrder();
+    // Start app with hole 1 selected by default
+    selectHole(1);
+
     startLocationTracking();
 }
 
@@ -62,12 +65,6 @@ function createHoleButtons() {
     select.id = 'holeSelect';
     select.className = 'hole-select';
 
-    const placeholder = document.createElement('option');
-    placeholder.value = '';
-    placeholder.textContent = 'Välj hål...';
-    placeholder.disabled = true;
-    placeholder.selected = true;
-    select.appendChild(placeholder);
 
     for (let i = 1; i <= 18; i++) {
         const opt = document.createElement('option');
@@ -80,6 +77,9 @@ function createHoleButtons() {
         const val = parseInt(e.target.value, 10);
         if (!isNaN(val)) selectHole(val);
     });
+
+    // Ensure dropdown shows Hål 1 by default (visual selection) or currentHole if set
+    select.value = state.currentHole ? String(state.currentHole) : '1';
 
     container.appendChild(select);
 }
@@ -288,6 +288,8 @@ function startLocationTracking() {
                 altitude: position.coords.altitude || 0
             };
             if (state.currentHole) {
+                // Fetch weather once when GPS becomes available and weather not yet loaded
+                if (!state.weatherData) fetchWeather();
                 updateDistances();
             }
         },
