@@ -31,7 +31,10 @@ let state = {
     weatherData: null,
     pinOffset: { x: 0, y: 0 },
     clubs: loadClubData(),
-    watchId: null
+    watchId: null,
+    timerStartTime: null,
+    timerRunning: false,
+    timerIntervalId: null
 };
 
 // Layout persistence key
@@ -176,6 +179,11 @@ function setupEventListeners() {
             location.reload();
         });
     }
+
+    // Timer event listeners
+    document.getElementById('startTimerBtn').addEventListener('click', startTimer);
+    document.getElementById('stopTimerBtn').addEventListener('click', stopTimer);
+    document.getElementById('resetTimerBtn').addEventListener('click', resetTimer);
 }
 
 function loadLayoutOrder() {
@@ -336,6 +344,12 @@ function selectHole(holeNumber) {
     document.getElementById('pinAdjustment').style.display = 'block';
     document.getElementById('weatherInfo').style.display = 'block';
     document.getElementById('clubRecommendation').style.display = 'block';
+    document.getElementById('timerSection').style.display = 'block';
+    
+    // Start timer on first hole if not already running
+    if (!state.timerRunning && !state.timerStartTime) {
+        startTimer();
+    }
     
     // Reset pin position
     resetPinPosition();
@@ -358,6 +372,52 @@ function resetPinPosition() {
     if (state.currentHole && state.userPosition) {
         updateDistances();
     }
+}
+
+// Timer Functions
+function startTimer() {
+    if (state.timerRunning) return;
+    
+    if (!state.timerStartTime) {
+        state.timerStartTime = Date.now();
+    }
+    
+    state.timerRunning = true;
+    document.getElementById('startTimerBtn').style.display = 'none';
+    document.getElementById('stopTimerBtn').style.display = 'block';
+    
+    state.timerIntervalId = setInterval(updateTimerDisplay, 1000);
+    updateTimerDisplay();
+}
+
+function stopTimer() {
+    state.timerRunning = false;
+    if (state.timerIntervalId) {
+        clearInterval(state.timerIntervalId);
+    }
+    document.getElementById('startTimerBtn').style.display = 'block';
+    document.getElementById('stopTimerBtn').style.display = 'none';
+}
+
+function resetTimer() {
+    stopTimer();
+    state.timerStartTime = null;
+    state.timerRunning = false;
+    document.getElementById('elapsedTime').textContent = '00:00';
+    document.getElementById('startTimerBtn').style.display = 'block';
+    document.getElementById('stopTimerBtn').style.display = 'none';
+}
+
+function updateTimerDisplay() {
+    if (!state.timerStartTime) return;
+    
+    const elapsed = Math.floor((Date.now() - state.timerStartTime) / 1000);
+    const hours = Math.floor(elapsed / 3600);
+    const minutes = Math.floor((elapsed % 3600) / 60);
+    const seconds = elapsed % 60;
+    
+    const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    document.getElementById('elapsedTime').textContent = timeString;
 }
 
 // Weather API
