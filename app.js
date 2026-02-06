@@ -8,6 +8,22 @@ const CLUBS = [
     'Järn 6', 'Järn 7', 'Järn 8', 'Järn 9', 'PW', 'SW', 'LW'
 ];
 
+// Default distances (meters) so users have sensible starting values they can edit
+const DEFAULT_CLUB_DATA = {
+    'Driver': { totalDistance: 230, carryDistance: 220 },
+    'Trä 3': { totalDistance: 210, carryDistance: 200 },
+    'Trä 5': { totalDistance: 195, carryDistance: 185 },
+    'Hybrid 3': { totalDistance: 185, carryDistance: 175 },
+    'Järn 4': { totalDistance: 170, carryDistance: 160 },
+    'Järn 5': { totalDistance: 160, carryDistance: 150 },
+    'Järn 6': { totalDistance: 150, carryDistance: 140 },
+    'Järn 7': { totalDistance: 140, carryDistance: 130 },
+    'Järn 8': { totalDistance: 130, carryDistance: 120 },
+    'Järn 9': { totalDistance: 120, carryDistance: 110 },
+    'PW': { totalDistance: 110, carryDistance: 95 },
+    'SW': { totalDistance: 50, carryDistance: 45 },
+    'LW': { totalDistance: 40, carryDistance: 35 }
+};
 // App State
 let state = {
     currentHole: null,
@@ -42,10 +58,17 @@ function loadClubData() {
     if (saved) {
         return JSON.parse(saved);
     }
-    
+    // Use predefined sensible defaults so users have values to edit from start
     const defaultClubs = {};
     CLUBS.forEach(club => {
-        defaultClubs[club] = { totalDistance: 0, carryDistance: 0 };
+        if (DEFAULT_CLUB_DATA[club]) {
+            defaultClubs[club] = { 
+                totalDistance: DEFAULT_CLUB_DATA[club].totalDistance,
+                carryDistance: DEFAULT_CLUB_DATA[club].carryDistance
+            };
+        } else {
+            defaultClubs[club] = { totalDistance: 0, carryDistance: 0 };
+        }
     });
     return defaultClubs;
 }
