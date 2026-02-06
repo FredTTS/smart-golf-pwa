@@ -707,3 +707,16 @@ input[type="range"]::-moz-range-thumb:hover {
     gap: 0.5rem;
     align-items: center;
 }
+
+/* Hole Image */
+.hole-image {
+    display: none;
+    overflow: hidden;
+}
+
+.hole-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    object-fit: cover;
+}
