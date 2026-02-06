@@ -131,8 +131,8 @@ body {
     font-size: 1rem;
     border: 2px solid var(--primary);
     border-radius: 0.5rem;
-    background: var(--text-primary);
-    color: var(--card-bg);
+    background: var(--card-bg);
+    color: var(--text-primary);
     appearance: none;
 }
 
@@ -143,8 +143,8 @@ body {
 }
 
 .hole-select option {
-    background: var(--text-primary);
-    color: var(--card-bg);
+    background: var(--card-bg);
+    color: var(--text-primary);
 }
 
 .hole-btn {
